@@ -114,20 +114,18 @@ app.controller("MainCtl", ["$scope", "$filter", "$http", "getInfoFactory", funct
         });
     }
 
-    $scope.getCryptonatorData = function(ticker) {
-        $http.get("https://www.cryptonator.com/api/ticker/" + selected_blockchain.ticker.toUpperCase() + "-" + ticker.toUpperCase()).success(function(data, status) {
-            $scope.cryptonator_data[data.ticker.target] = data.ticker.price;
-            $scope.cryptonator_updated = data.timestamp;
+    $scope.getCoinmarketcapData = function() {
+        $http.get("https://api.coinmarketcap.com/v1/ticker/" + selected_blockchain.name.toLowerCase() + "/").success(function(data, status) {
+            $scope.coinmarketcap_data = data;
+            console.log(data);
+                        console.log(status);
         });
     }
-
-    $scope.getCryptonatorData('BTC');
-    $scope.getCryptonatorData('USD');
 
     $scope.$watchCollection('[info]', function() {
         if ($scope.info !== undefined && $scope.info.height !== undefined) {
             $scope.network_hashrate = $scope.info.difficulty / selected_blockchain.difficulty_target
-
+            $scope.getCoinmarketcapData();
             $scope.getBlocks($scope.info.height - 1);
         }
     });

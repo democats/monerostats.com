@@ -89,7 +89,7 @@
             <h3 class="panel-title">Price</h3>
          </div>
          <div class="panel-body">
-            <h4 data-bind="text: price">${{cryptonator_data.USD | number: 2}} | ฿{{cryptonator_data.BTC | number: 4}}</h4>
+            <h4 data-bind="text: price">${{coinmarketcap_data[0].price_usd | number: 2}} | ฿{{coinmarketcap_data[0].price_btc | number: 4}}</h4>
          </div>
       </div>
    </div>
