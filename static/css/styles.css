@@ -279,10 +279,13 @@
 .navbar-form .form-control {
     width:400px;
 }
+.navbar .navbar-center {
+  text-align: center;
+}
 
 
 #footer {
-    height: 50pt;
+    height: 70pt;
     padding-top: 5px;
     margin-bottom: 0;
     font-size: 13px;
