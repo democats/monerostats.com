@@ -1,0 +1,250 @@
+<html ng-app="blockchain">
+<head>
+  <title>Monero transaction | MoneroStats.com</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.29/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+  <script src="http://code.highcharts.com/stock/highstock.src.js"></script>
+  <script src="/dist/highcharts-ng.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/1.0.0-beta.3/angular-moment.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+
+  <script src="/config.js"></script>
+
+  <link rel="stylesheet" href="/css/styles.css">
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-883823-26', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+</head>
+
+
+
+
+<body>
+<div class="main-app-container">
+
+  
+<div ng-controller="TransactionDetailsCtl">
+
+   
+<nav class="navbar navbar-inverse ng-scope">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" target="_self" href="/" title="Monero stats, monero block explorer, monero charts">MoneroStats</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" ng-controller="SearchBlockchainCtl">
+      <ul class="nav navbar-nav">
+        <li><a target="_self" class="" href="/blockchain/" title="Monero block explorer">Blockchain explorer</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Charts <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a target="_self" href="/charts/?type=basic" title="monero basic charts">Basic</a></li>
+            <li><a target="_self" href="/charts/?type=transactions" title="monero transactions charts">Transactions</a></li>
+            <li><a target="_self" href="/charts/?type=blocks" title="monero blocks charts">Blocks</a></li>
+          </ul>
+        </li>
+      </ul>
+      <form class="navbar-form navbar-right">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="block height / block hash / transaction hash" ng-model="search" />
+        </div>
+        <button type="submit" class="btn btn-default" ng-click="searchFor(search)">Search</button>
+      </form>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+
+<div class="container">
+   <noscript></noscript>
+
+   <div class="main-app-container" ng-if="transaction">
+         <section class="blockchain">
+            <div>
+               <h1><span>Monero transaction </span></h1>
+
+               <div>
+                  <table class="table dic">
+                     <tbody>
+                        <tr>
+                           <td><span>Hash</span><a data-hint="Unique fingerprint of the transaction." class="hint--right hint--rounded hint--tooltip circle">?</a></td>
+                           <td>{{transaction.txDetails.hash}}</td>
+                        </tr>
+                        <!--
+                        <tr>
+                           <td><span>Recieved time (UTC)</span><a data-hint="Time when the transaction was added into transaction pool." class="hint--right hint--rounded hint--tooltip circle">?</a></td>
+                           <td><span>{{ transaction.txDetails.receiveTime | amFromUnix | amUtc | amDateFormat:'YYYY-MM-DD HH:mm:ss' }}</span><span> (</span><span>{{transaction.txDetails.receiveTime | amFromUnix | amUtc | timeAgo}}</span><span>)</span></td>
+                        </tr>
+                        -->
+                        <tr>
+                           <td>
+                              <span>First confirmation time (UTC)</span>
+                              <a class="hint hint--html hint--right hint--rounded hint--tooltip circle">
+                                 <div class="hint__content" style="width:400px;white-space:normal;">Time when the transaction was included into a block. For coinbase transactions it is equal to the block timestamp.</div>
+                                 <span>?</span>
+                              </a>
+                           </td>
+                           <td><span>{{transaction.block.timestamp | amFromUnix | amUtc | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}</span><span> (</span><span>{{transaction.block.timestamp | amFromUnix | amUtc | timeAgo}}</span><span>)</span></td>
+                        </tr>
+                        <tr>
+                           <td><span>Fee</span><a data-hint="Money that goes to the miner, who included this transaction into block." class="hint--right hint--rounded hint--tooltip circle">?</a></td>
+                           <td>{{transaction.txDetails.fee | asCoinUnits:selected_blockchain.coin_units}}</td>
+                        </tr>
+                        <tr>
+                           <td>Sum of outputs</td>
+                           <td>{{transaction.txDetails.amount_out | asCoinUnits:selected_blockchain.coin_units}}</td>
+                        </tr>
+                        <tr>
+                           <td><span> </span><span>Size, bytes</span><a data-hint="Size of the transaction in bytes." class="hint--right hint--rounded hint--tooltip circle">?</a></td>
+                           <td>{{transaction.txDetails.size}}</td>
+                        </tr>
+                        <!--
+                        <tr>
+                           <td>
+                              <span>Extra nonce</span>
+                              <a class="hint hint--html hint--right hint--rounded hint--tooltip circle">
+                                 <div class="hint__content" style="width:400px;white-space:normal;">The number that the miner calculates in order to solve the block. Effective only for coinbase transactions (which transfers block reward to the miner).</div>
+                                 <span>?</span>
+                              </a>
+                           </td>
+                           <td>b</td>
+                        </tr>
+                        <tr>
+                           <td><span> </span><span>One-time public key</span><a data-hint="Transaction's one-time public key. Please refer to CyptoNote whitepaper for more information." class="hint--right hint--rounded hint--tooltip circle">?</a></td>
+                           <td>b87594e6d9b820b0b9b5e88ffe6fe8dcf9b301f300ba0bfd6d15bee07f38c430</td>
+                        </tr>
+                        -->
+                        <tr ng-if="transaction.txDetails.paymentId">
+                           <td>
+                              <span>Payment ID</span>
+                              <a class="hint hint--html hint--right hint--rounded hint--tooltip circle">
+                                 <div class="hint__content" style="width:400px;white-space:normal;">Optional user-defined string. Can be used by anyone to distinguish the transactions easier.</div>
+                                 <span>?</span>
+                              </a>
+                           </td>
+                           <td>{{transaction.txDetails.paymentId}}</td>
+                        </tr>
+                        <tr>
+                           <td>
+                              <span>Mixin count</span>
+                              <a class="hint hint--html hint--right hint--rounded hint--tooltip circle">
+                                 <div class="hint__content" style="width:400px;white-space:normal;">Denotes how many random inputs are mixed within this transactions in order to achieve desired level of anonimity. Mixin count 1 means no additional inputs are mixed in and thus each input can be traced back.</div>
+                                 <span>?</span>
+                              </a>
+                           </td>
+                           <td>{{transaction.txDetails.mixin}}</td>
+                        </tr>
+                     </tbody>
+                  </table>
+                  <h1>From block</h1>
+                  <table class="table dic">
+                     <tbody>
+                        <tr>
+                           <td>Hash</td>
+                           <td><a target="_self" href="/blockchain/block/?hash={{transaction.block.hash}}">{{transaction.block.hash}}</a></td>
+                        </tr>
+                        <tr>
+                           <td>Height</td>
+                           <td>{{transaction.block.height}}</td>
+                        </tr>
+                        <tr>
+                           <td>Timestamp (UTC)</td>
+                           <td><span>{{transaction.block.timestamp | amFromUnix | amUtc | amDateFormat:'YYYY-MM-DD HH:mm:ss'}}</span><span> (</span><span>{{transaction.block.timestamp | amFromUnix | amUtc | timeAgo}}</span><span>)</span></td>
+                        </tr>
+                     </tbody>
+                  </table>
+                  <h1><span>Inputs</span><span><span>(</span><span>{{transaction.tx.vin.length}}</span><span>)</span></span></h1>
+                  <table class="table">
+                     <tbody>
+                        <tr>
+                           <th><span>Amount</span><span><span>(</span><span>{{selected_blockchain.ticker}}</span><span>)</span></span></th>
+                           <th>Image</th>
+                           <!--<th>From transaction</th>-->
+                           <th>Mixin count</th>
+                        </tr>
+                       <tr ng-repeat="input in transaction.tx.vin">
+                           <td>{{input.amount | asCoinUnits:selected_blockchain.coin_units}}</td>
+                           <td>{{input.k_image}}</td>
+                           <!--<td>Untraceable</td>-->
+                           <td>{{transaction.txDetails.mixin}}</td>
+                        </tr>
+                     </tbody>
+                  </table>
+                  <h1><span>Outputs</span><span><span>(</span><span>{{transaction.tx.vout.length}}</span><span>)</span></span></h1>
+                  <table class="table">
+                     <tbody>
+                        <tr>
+                           <th>Index</th>
+                           <th><span>Amount</span><span> (</span><span>{{selected_blockchain.ticker}}</span><span>)</span></th>
+                           <th>Key</th>
+                           <!--<th>Global index</th>-->
+                        </tr>
+                       <tr ng-repeat="output in transaction.tx.vout">
+                           <td>{{$index}}</td>
+                           <td>{{output.amount | asCoinUnits:selected_blockchain.coin_units}}</td>
+                           <td>{{output.key}}</td>
+                           <!--<td>0</td>-->
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </section>
+   </div>
+
+   <div class="main-app-container" ng-if="!transaction">
+      <section class="blockchain">
+         <div>
+            <h1><span>Monero transaction </span><small>{{hash}}</small><br />
+            <small>not found</small></h1>
+
+          </div>
+      </section>
+   </div>
+</div>
+
+</div>
+<script src="/js/scripts.js"></script>
+
+<script src="/js/app.js"></script>
+
+
+
+  
+<div>
+   <nav id="footer" class="navbar navbar-default">
+      <div class="shares">
+         <div class="container">
+            <div class="collapse navbar-collapse">
+               <ul class="nav navbar-nav navbar-right">
+                  <li class="copy"><a target="_self" href="/" title="monero block explorer"><span>© </span><span>2016</span><span> MoneroStats</span></a></li>
+                  <li class="copy"><a target="_self" href="http://democats.org/" title="bytecoin, dashcoin, karbowanec pool"><span>Powered by Democats</span></a></li>
+               </ul>
+            </div>
+         </div>
+      </div>
+   </nav>
+</div>
+</div>
+</body>
+</html>

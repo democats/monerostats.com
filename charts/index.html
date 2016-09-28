@@ -1,0 +1,210 @@
+<html ng-app="blockchain">
+<head>
+  <title>Monero charts | MoneroStats.com</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.29/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+  <script src="http://code.highcharts.com/stock/highstock.src.js"></script>
+  <script src="/dist/highcharts-ng.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/1.0.0-beta.3/angular-moment.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+
+  <script src="/config.js"></script>
+
+  <link rel="stylesheet" href="/css/styles.css">
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-883823-26', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+</head>
+
+
+
+
+<body>
+<div class="main-app-container">
+
+  
+<div ng-controller="BlockchainChartsCtl">
+   
+<nav class="navbar navbar-inverse ng-scope">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" target="_self" href="/" title="Monero stats, monero block explorer, monero charts">MoneroStats</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" ng-controller="SearchBlockchainCtl">
+      <ul class="nav navbar-nav">
+        <li><a target="_self" class="" href="/blockchain/" title="Monero block explorer">Blockchain explorer</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Charts <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a target="_self" href="/charts/?type=basic" title="monero basic charts">Basic</a></li>
+            <li><a target="_self" href="/charts/?type=transactions" title="monero transactions charts">Transactions</a></li>
+            <li><a target="_self" href="/charts/?type=blocks" title="monero blocks charts">Blocks</a></li>
+          </ul>
+        </li>
+      </ul>
+      <form class="navbar-form navbar-right">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="block height / block hash / transaction hash" ng-model="search" />
+        </div>
+        <button type="submit" class="btn btn-default" ng-click="searchFor(search)">Search</button>
+      </form>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+   <div class="container">
+      <noscript></noscript>
+         <div ng-show="type == 'basic'" class="ng-hide">
+            <h1><span>Monero basic charts</span></h1>
+            <div class="row">
+               <div class="col-md-12" id="difficulty_avg">
+                  <highchart id="chart1" config="chartDifficultyConfig" class="span6"></highchart>
+                  <div class="add-space pull-left"><button class="btn btn-default btn-sm" ng-click="reloadChart('monero', 'difficulty_avg', '1h', 'chartDifficultyConfig', 'toMicrotime', 'Monero Difficulty', '', 0)" ng-disabled="isDisabled" ng-model="isDisabled">More details</button>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-md-12" id="hashrate">
+                  <highchart id="chart2" config="chartHashrateConfig" class="span6"></highchart>
+                  <div class="add-space pull-left"><button class="btn btn-default btn-sm" ng-click="reloadChart('monero', 'hashrate', '1h', 'chartHashrateConfig', 'toMicrotime', 'Monero Hashrate', ' H/s', 2)" ng-disabled="isDisabled" ng-model="isDisabled">More details</button>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-md-12" id="generated_coins">
+                  <highchart id="chart3" config="chartGeneratedCoinsConfig" class="span6"></highchart>
+                  <div class="add-space pull-left"><button class="btn btn-default btn-sm" ng-click="reloadChart('monero', 'generated_coins', '1h', 'chartGeneratedCoinsConfig', 'toMicrotimeCoins', 'Monero Generated coins', '', 0)" ng-disabled="isDisabled" ng-model="isDisabled">More details</button>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-md-12" id="block_reward">
+                  <highchart id="chart4" config="chartBlockRewardConfig" class="span6"></highchart>
+                  <div class="add-space pull-left"><button class="btn btn-default btn-sm" ng-click="reloadChart('monero', 'block_reward', '1h', 'chartBlockRewardConfig', 'toMicrotimeCoins', 'Monero Block reward', '', 2)" ng-disabled="isDisabled" ng-model="isDisabled">More details</button>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-md-12" id="blockchain_size">
+                  <highchart id="chart4" config="chartBlockchainSize" class="span6"></highchart>
+                  <div class="add-space pull-left"><button class="btn btn-default btn-sm" ng-click="reloadChart('monero', 'blockchain_size', '1h', 'chartBlockchainSize', 'toMicrotimeMB', 'Monero Blockchain size', 'MB', 0)" ng-disabled="isDisabled" ng-model="isDisabled">More details</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div ng-show="type == 'transactions'" class="ng-hide">
+            <h1><span>Monero transactions charts</span></h1>
+            <div class="row">
+               <div class="col-md-12">
+                  <highchart id="chart5" config="chartTransactionsCountAllConfig" class="span6"></highchart>
+                  <div class="add-space pull-left"><button class="btn btn-default btn-sm" ng-click="reloadChart('monero', 'transactions_count_all', '1h', 'chartTransactionsCountAllConfig', 'toMicrotime', 'Monero Transactions count (all)', '', 0)" ng-disabled="isDisabled" ng-model="isDisabled">More details</button>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-md-12">
+                  <highchart id="chart5" config="chartTransactionsCountConfig" class="span6"></highchart>
+                  <div class="add-space pull-left"><button class="btn btn-default btn-sm" ng-click="reloadChart('monero', 'transactions_count', '1h', 'chartTransactionsCountConfig', 'toMicrotime', 'Monero Transactions count (per period)', '', 0)" ng-disabled="isDisabled" ng-model="isDisabled">More details</button>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-md-12">
+                  <highchart id="chart1" config="chartTransactionsFeesConfig" class="span6"></highchart>
+                  <div class="add-space pull-left"><button class="btn btn-default btn-sm" ng-click="reloadChart('monero', 'transactions_fees', '1h', 'chartTransactionsFeesConfig', 'toMicrotimeCoins', 'Monero Transactions fees', '', 2)" ng-disabled="isDisabled" ng-model="isDisabled">More details</button>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-md-12">
+                  <highchart id="chart1" config="chartTransactionsOutputsConfig" class="span6"></highchart>
+                  <div class="add-space pull-left"><button class="btn btn-default btn-sm" ng-click="reloadChart('monero', 'transactions_outputs', '1h', 'chartTransactionsOutputsConfig', 'toMicrotimeCoins', 'Monero Transactions outputs (sum)', '', 2)" ng-disabled="isDisabled" ng-model="isDisabled">More details</button>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-md-12">
+                  <highchart id="chart1" config="chartTransactionsSizeConfig" class="span6"></highchart>
+                  <div class="add-space pull-left"><button class="btn btn-default btn-sm" ng-click="reloadChart('monero', 'transactions_size_avg', '1h', 'chartTransactionsSizeConfig', 'toMicrotime', 'Monero Transactions size (avg)', 'bytes', 0)" ng-disabled="isDisabled" ng-model="isDisabled">More details</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div ng-show="type == 'blocks'" class="ng-hide">
+            <h1><span>Monero blocks charts</span></h1>
+            <div class="row">
+               <div class="col-md-12">
+                  <highchart id="chart1" config="chartBlocksSizeConfig" class="span6"></highchart>
+                  <div class="add-space pull-left"><button class="btn btn-default btn-sm" ng-click="reloadChart('monero', 'blocks_size_avg', '1h', 'chartBlocksSizeConfig', 'toMicrotime', 'Monero Blocks size (average)', ' bytes', 0)" ng-disabled="isDisabled" ng-model="isDisabled">More details</button>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-md-12">
+                  <highchart id="chart1" config="chartBlocksTimeConfig" class="span6"></highchart>
+                  <div class="add-space pull-left"><button class="btn btn-default btn-sm" ng-click="reloadChart('monero', 'blocks_time_avg', '1h', 'chartBlocksTimeConfig', 'toMicrotime', 'Monero Blocks time (average)', ' s', 0)" ng-disabled="isDisabled" ng-model="isDisabled">More details</button>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-md-12">
+                  <highchart id="chart1" config="chartBlocksCurrentTxMedianConfig" class="span6"></highchart>
+                  <div class="add-space pull-left"><button class="btn btn-default btn-sm" ng-click="reloadChart('monero', 'block_current_txs_median_max', '1h', 'chartBlocksCurrentTxMedianConfig', 'toMicrotime', 'Monero Current tx median', ' bytes', 0)" ng-disabled="isDisabled" ng-model="isDisabled">More details</button>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-md-12">
+                  <highchart id="chart1" config="chartBlocksPenaltyPercentageConfig" class="span6"></highchart>
+                  <div class="add-space pull-left"><button class="btn btn-default btn-sm" ng-click="reloadChart('monero', 'blocks_penalty_percentage', '1h', 'chartBlocksPenaltyPercentageConfig', 'toMicrotime', 'Monero Percentage of blocks with penalty', '%', 0)" ng-disabled="isDisabled" ng-model="isDisabled">More details</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+   </div>
+</div>
+<script src="/js/scripts.js"></script>
+
+<script src="/js/app.js"></script>
+
+
+
+  
+<div>
+   <nav id="footer" class="navbar navbar-default">
+      <div class="shares">
+         <div class="container">
+            <div class="collapse navbar-collapse">
+               <ul class="nav navbar-nav navbar-right">
+                  <li class="copy"><a target="_self" href="/" title="monero block explorer"><span>© </span><span>2016</span><span> MoneroStats</span></a></li>
+                  <li class="copy"><a target="_self" href="http://democats.org/" title="bytecoin, dashcoin, karbowanec pool"><span>Powered by Democats</span></a></li>
+               </ul>
+            </div>
+         </div>
+      </div>
+   </nav>
+</div>
+</div>
+</body>
+</html>
