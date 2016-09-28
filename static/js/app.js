@@ -117,8 +117,6 @@ app.controller("MainCtl", ["$scope", "$filter", "$http", "getInfoFactory", funct
     $scope.getCoinmarketcapData = function() {
         $http.get("https://api.coinmarketcap.com/v1/ticker/" + selected_blockchain.name.toLowerCase() + "/").success(function(data, status) {
             $scope.coinmarketcap_data = data;
-            console.log(data);
-                        console.log(status);
         });
     }
 
